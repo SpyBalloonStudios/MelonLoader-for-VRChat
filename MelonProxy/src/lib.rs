@@ -159,18 +159,28 @@ unsafe fn get_system32_path() -> Option<String> {
 /// Called when the thread is spawned
 #[cfg(target_os = "windows")]
 unsafe extern "system" fn init(_: *mut c_void) -> u32 {
-    let current_exe_ab = std::env::current_exe();
-    let game_name_ab = current_exe_ab
-        .file_name()
-        .ok_or("Failed to get game name")?
-        .to_str()
-        .ok_or("Failed to get game name")?;
+        // Versuchen, den aktuellen Exe-Pfad zu erhalten
+    let current_exe_result = std::env::current_exe();
 
- 
+    // Das Result auspacken, um `PathBuf` zu erhalten, oder frühzeitig zurückkehren bei einem Fehler
+    let current_exe_path = match current_exe_result {
+        Ok(path) => path,
+        Err(_) => {
+            println!("Failed to get current exe path");
+            return 1;
+        }
+    };
+
+    // Den Namen der ausführbaren Datei aus dem Pfad extrahieren
+    let game_name = current_exe_path.file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("");
+
     // Prüfen, ob es sich um VRChat handelt
-    if !game_name_ab.to_str().unwrap_or_default().contains("VRChat") {
+    if !game_name.contains("VRChat") {
         return 1; // Frühzeitige Rückkehr, keine weiteren Aktionen durchführen
     }
+
     
     use std::{path::PathBuf, ffi::{c_char, CString, CStr}};
 
