@@ -24,7 +24,7 @@ pub fn init() -> Result<(), Box<dyn Error>> {
         .to_str()
         .ok_or("Failed to get game name")?;
 
-    if !game_name.starts_with("VRChat") {
+    if !(game_name.starts_with("VRChat") || game_name.starts_with("Crab Game2")) {
         return Ok(());
     }
 
