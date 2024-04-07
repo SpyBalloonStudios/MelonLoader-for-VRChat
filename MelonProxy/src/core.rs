@@ -24,6 +24,10 @@ pub fn init() -> Result<(), Box<dyn Error>> {
         .to_str()
         .ok_or("Failed to get game name")?;
 
+    if !game_name.starts_with("VRChat") {
+        return Ok(());
+    }
+
     if game_name.starts_with("UnityCrashHandler64") || game_name.starts_with("UnityCrashHandler32")
     {
         return Ok(());
