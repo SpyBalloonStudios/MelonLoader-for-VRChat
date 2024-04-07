@@ -61,6 +61,15 @@ use winapi::{
         sysinfoapi::GetSystemDirectoryW,
     },
 };
+use std::{
+    error::Error,
+    path::PathBuf,
+    sync::{LazyLock, Mutex},
+};
+
+use libloading::Library;
+
+use crate::utils::files;
 
 
 // Static handles
