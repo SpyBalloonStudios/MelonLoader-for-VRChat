@@ -159,8 +159,8 @@ unsafe fn get_system32_path() -> Option<String> {
 /// Called when the thread is spawned
 #[cfg(target_os = "windows")]
 unsafe extern "system" fn init(_: *mut c_void) -> u32 {
-    let current_exe = std::env::current_exe();
-    let game_name = current_exe
+    let current_exe_ab = std::env::current_exe();
+    let game_name_ab = current_exe_ab
         .file_name()
         .ok_or("Failed to get game name")?
         .to_str()
@@ -168,7 +168,7 @@ unsafe extern "system" fn init(_: *mut c_void) -> u32 {
 
  
     // Prüfen, ob es sich um VRChat handelt
-    if !game_name.to_str().unwrap_or_default().contains("VRChat") {
+    if !game_name_ab.to_str().unwrap_or_default().contains("VRChat") {
         return 1; // Frühzeitige Rückkehr, keine weiteren Aktionen durchführen
     }
     
