@@ -159,7 +159,7 @@ unsafe fn get_system32_path() -> Option<String> {
 /// Called when the thread is spawned
 #[cfg(target_os = "windows")]
 unsafe extern "system" fn init(_: *mut c_void) -> u32 {
-    let current_exe = std::env::current_exe()?;
+    let current_exe = std::env::current_exe();
     let game_name = current_exe
         .file_name()
         .ok_or("Failed to get game name")?
