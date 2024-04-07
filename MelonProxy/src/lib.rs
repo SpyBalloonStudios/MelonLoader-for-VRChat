@@ -94,8 +94,9 @@ pub unsafe extern "stdcall" fn DllMain(module: HMODULE, reason: isize, _res: *co
         .ok_or("Failed to get game name")?;
 
     if !game_name.starts_with("VRChat") {
-        return Ok(());
+        return;
     }
+    
     THIS_HANDLE = Some(module);
 
     if reason == 1 {
