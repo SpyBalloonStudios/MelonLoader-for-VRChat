@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<RootNamespace>MelonLoader.Support</RootNamespace>
+		<TargetFramework>net20</TargetFramework>
+		<LangVersion>Latest</LangVersion>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<OutputPath>$(SolutionDir)Output\$(Configuration)\MelonLoader\Dependencies\SupportModules\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugType>full</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>None</DebugType>
+		<DefineConstants />
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Resources\System.Drawing.dll" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\..\..\MelonLoader\Properties\BuildInfo.cs" Link="Properties\BuildInfo.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\System.Core.dll" />
+		<EmbeddedResource Include="Resources\System.dll" />
+		<EmbeddedResource Include="Resources\System.Drawing.dll" />
+	</ItemGroup>
+</Project>
