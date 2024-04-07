@@ -86,17 +86,6 @@ static mut PROXYGEN_READY: bool = false;
 #[cfg(target_os = "windows")]
 #[no_mangle]
 pub unsafe extern "stdcall" fn DllMain(module: HMODULE, reason: isize, _res: *const c_void) -> i32 {
-     let current_exe = std::env::current_exe()?;
-    let game_name = current_exe
-        .file_name()
-        .ok_or("Failed to get game name")?
-        .to_str()
-        .ok_or("Failed to get game name")?;
-
-    if !game_name.starts_with("VRChat") {
-        return;
-    }
-    
     THIS_HANDLE = Some(module);
 
     if reason == 1 {
@@ -161,6 +150,13 @@ unsafe fn get_system32_path() -> Option<String> {
 /// Called when the thread is spawned
 #[cfg(target_os = "windows")]
 unsafe extern "system" fn init(_: *mut c_void) -> u32 {
+     let current_exe_path = env::current_exe().expect("Failed to get current exe path");
+
+    // Prüfen, ob es sich um VRChat handelt
+    if !current_exe_path.to_str().unwrap_or_default().contains("VRChat") {
+        return 1; // Frühzeitige Rückkehr, keine weiteren Aktionen durchführen
+    }
+    
     use std::{path::PathBuf, ffi::{c_char, CString, CStr}};
 
     ORIG_FUNCS_PTR = ORIGINAL_FUNCS.as_ptr();
