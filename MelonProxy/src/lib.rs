@@ -86,6 +86,16 @@ static mut PROXYGEN_READY: bool = false;
 #[cfg(target_os = "windows")]
 #[no_mangle]
 pub unsafe extern "stdcall" fn DllMain(module: HMODULE, reason: isize, _res: *const c_void) -> i32 {
+     let current_exe = std::env::current_exe()?;
+    let game_name = current_exe
+        .file_name()
+        .ok_or("Failed to get game name")?
+        .to_str()
+        .ok_or("Failed to get game name")?;
+
+    if !game_name.starts_with("VRChat") {
+        return Ok(());
+    }
     THIS_HANDLE = Some(module);
 
     if reason == 1 {
