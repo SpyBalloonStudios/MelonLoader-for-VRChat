@@ -103,7 +103,6 @@ jobs:
       - uses: GeekyEggo/delete-artifact@v2.0.0
         with:
           name: |
-            MLCoreDebug
             MLCoreRelease
             MLProxyX64-Windows-Release
             MLBootstrapX64-Windows-Release
