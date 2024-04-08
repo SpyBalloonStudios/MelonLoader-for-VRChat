@@ -10,6 +10,7 @@ fn startup() {
 }
 
 fn init() -> Result<(), DynErr> {
+    console::init()?;
     let current_exe = std::env::current_exe()?;
     let game_name = current_exe
         .file_name()
@@ -21,7 +22,6 @@ fn init() -> Result<(), DynErr> {
         return Ok(());
     }
 
-    console::init()?;
     logger::init()?;
 
     hooks::init_hook::hook()?;
