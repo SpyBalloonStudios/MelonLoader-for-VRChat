@@ -10,18 +10,13 @@ use crate::utils::files;
 
 use std::error::Error;
 use std::path::PathBuf;
-use winreg::enums::*;
-use winreg::RegKey;
+
 
 pub static BOOTSTRAP: LazyLock<Mutex<Option<Library>>> = LazyLock::new(|| Mutex::new(None));
 
 pub fn init() -> Result<(), Box<dyn Error>> {
-    let args: Vec<String> = std::env::args().collect();
- let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
-    let vrchat_key = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 438100";
-    let vrchat: RegKey = hklm.open_subkey(vrchat_key)?;
-
-    let install_location: String = vrchat.get_value("InstallLocation")?;
+  
+    let install_location: String = "";
     let mut base_dir = PathBuf::from(install_location);
 
     let mut no_mods = false;
