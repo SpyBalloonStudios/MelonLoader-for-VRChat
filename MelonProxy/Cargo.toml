@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 msgbox = "0.7.0"
 libloading = "0.8.1"
+winreg = "0.10"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 #proxygen-macros = "0.5.0"
