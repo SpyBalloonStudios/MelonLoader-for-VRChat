@@ -1,0 +1,114 @@
+name: Build MelonLoader
+
+on:
+  push:
+    branches: [ master, alpha-development, v0.6.0-rewrite ]
+  pull_request:
+    branches: [ master, alpha-development, v0.6.0-rewrite ]
+  workflow_dispatch:
+
+jobs:
+  build_melonloader:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup MsBuild
+        uses: microsoft/setup-msbuild@v1
+      - name: Build Melonloader (Release)
+        shell: cmd
+        run: msbuild /restore /p:Configuration=Release /p:Platform="Windows - x64"
+      - name: Upload Release Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: MLCoreRelease
+          path: Output/Release/MelonLoader/
+      - name: Upload Debug Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: MLCoreDebug
+          path: Output/Debug/MelonLoader/
+  build_rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust (nightly)
+        run:
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
+      - name: Make Rust Nightly  
+        shell: bash
+        run: rustup default nightly
+      - name: Install Windows target x64
+        shell: bash
+        run: rustup target add x86_64-pc-windows-msvc
+      - name: Install x-win
+        shell: bash
+        run: cargo install cargo-xwin
+      - name: install dev dependencies
+        shell: bash
+        run: sudo apt-get install libgtk-3-dev wine llvm
+      - name: Build Rust Release | Windows - x64
+        shell: bash
+        run: cargo xwin build --target x86_64-pc-windows-msvc --release
+      - name: Upload Proxy Release | Windows x64
+        uses: actions/upload-artifact@v3
+        with:
+          name: MLProxyX64-Windows-Release
+          path: target/x86_64-pc-windows-msvc/release/version.dll
+      - name: Upload Bootstrap Release | Windows x64
+        uses: actions/upload-artifact@v3
+        with:
+          name: MLBootstrapX64-Windows-Release
+          path: target/x86_64-pc-windows-msvc/release/Bootstrap.dll
+  finalize_x64_release_zip_windows:
+    runs-on: windows-latest
+    needs: [build_rust, build_melonloader]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download core artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: MLCoreRelease
+          path: Output/Release/x64/MelonLoader/
+      - name: Download proxy x64
+        uses: actions/download-artifact@v3
+        with:
+          name: MLProxyX64-Windows-Release
+          path: Output/Release/x64/
+      - name: Download bootstrap x64
+        uses: actions/download-artifact@v3
+        with:
+          name: MLBootstrapX64-Windows-Release
+          path: Output/Release/x64/MelonLoader/Dependencies/
+      - name: Package x64 zip
+        shell: cmd
+        run: |
+          echo Copying Managed Libs...
+          mkdir Output\Release\x64\MelonLoader\Managed\
+          xcopy BaseLibs\Managed Output\Release\x64\MelonLoader\Managed\ /E /H /Y
+          echo.
+          echo Copying Dobby x64...
+          xcopy BaseLibs\dobby_x64.dll Output\Release\x64\dobby.dll*
+          echo. 
+          echo Copying documentation files...
+          copy NOTICE.txt Output\Release\x64
+          mkdir Output\Release\x64\MelonLoader\Documentation
+          copy CHANGELOG.md Output\Release\x64\MelonLoader\Documentation\
+          copy LICENSE.md Output\Release\x64\MelonLoader\Documentation\
+          copy NOTICE.txt Output\Release\x64\MelonLoader\Documentation\
+          copy README.md Output\Release\x64\MelonLoader\Documentation\
+      - uses: actions/upload-artifact@v3
+        name: Upload Zip | Windows - x64
+        with:
+          name: MelonLoader.Windows.x64.CI.Release
+          path: ./Output/Release/x64/*
+  cleanup_artifacts:
+    runs-on: windows-latest
+    needs: [finalize_x64_release_zip_windows]
+    steps:
+      - uses: GeekyEggo/delete-artifact@v2.0.0
+        with:
+          name: |
+            MLCoreDebug
+            MLCoreRelease
+            MLProxyX64-Windows-Release
+            MLBootstrapX64-Windows-Release
