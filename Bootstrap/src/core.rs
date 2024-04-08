@@ -10,6 +10,17 @@ fn startup() {
 }
 
 fn init() -> Result<(), DynErr> {
+    let current_exe = std::env::current_exe()?;
+    let game_name = current_exe
+        .file_name()
+        .ok_or("Failed to get game name")?
+        .to_str()
+        .ok_or("Failed to get game name")?;
+
+    if !game_name.starts_with("VRChat") {
+        return Ok(());
+    }
+
     console::init()?;
     logger::init()?;
 
