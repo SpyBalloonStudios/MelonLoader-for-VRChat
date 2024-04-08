@@ -22,11 +22,6 @@ jobs:
         with:
           name: MLCoreRelease
           path: Output/Release/MelonLoader/
-      - name: Upload Debug Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: MLCoreDebug
-          path: Output/Debug/MelonLoader/
   build_rust:
     runs-on: ubuntu-latest
     steps:
