@@ -15,10 +15,7 @@ use std::path::PathBuf;
 pub static BOOTSTRAP: LazyLock<Mutex<Option<Library>>> = LazyLock::new(|| Mutex::new(None));
 
 pub fn init() -> Result<(), Box<dyn Error>> {
-  
-    let install_location: String = "";
-    let mut base_dir = PathBuf::from(install_location);
-
+    let mut base_dir = std::env::current_dir()?;
     let mut no_mods = false;
 
     let current_exe = std::env::current_exe()?;
