@@ -104,6 +104,5 @@ jobs:
         with:
           name: |
             MLCoreDebug
-            MLCoreRelease
             MLProxyX64-Windows-Debug
             MLBootstrapX64-Windows-Debug
