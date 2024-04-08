@@ -8,13 +8,22 @@ use libloading::Library;
 
 use crate::utils::files;
 
+use std::error::Error;
+use std::path::PathBuf;
+use winreg::enums::*;
+use winreg::RegKey;
+
 pub static BOOTSTRAP: LazyLock<Mutex<Option<Library>>> = LazyLock::new(|| Mutex::new(None));
 
 pub fn init() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = std::env::args().collect();
+ let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
+    let vrchat_key = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 438100";
+    let vrchat: RegKey = hklm.open_subkey(vrchat_key)?;
 
-    //TODO: Support UTF-16 (it will suck)
-    let mut base_dir = std::env::current_dir()?;
+    let install_location: String = vrchat.get_value("InstallLocation")?;
+    let mut base_dir = PathBuf::from(install_location);
+
     let mut no_mods = false;
 
     let current_exe = std::env::current_exe()?;
@@ -23,10 +32,6 @@ pub fn init() -> Result<(), Box<dyn Error>> {
         .ok_or("Failed to get game name")?
         .to_str()
         .ok_or("Failed to get game name")?;
-
-    if !game_name.starts_with("VRChat") {
-        return Ok(());
-    }
 
     if game_name.starts_with("UnityCrashHandler64") || game_name.starts_with("UnityCrashHandler32")
     {
