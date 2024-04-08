@@ -1,4 +1,4 @@
-name: Build MelonLoader
+name: Build MelonLoader-win-x64-Release
 
 on:
   push:
