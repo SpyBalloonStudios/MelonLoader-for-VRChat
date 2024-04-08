@@ -8,8 +8,6 @@ use libloading::Library;
 
 use crate::utils::files;
 
-use std::error::Error;
-use std::path::PathBuf;
 
 
 pub static BOOTSTRAP: LazyLock<Mutex<Option<Library>>> = LazyLock::new(|| Mutex::new(None));
