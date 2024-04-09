@@ -5,7 +5,7 @@ macro_rules! debug_enabled {
             true
         } else {
             let args: Vec<String> = std::env::args().collect();
-            args.contains(&"--melonloader.debug".to_string())
+            args.contains(&"--elementsloader.debug".to_string())
         }
     }};
 }
@@ -14,7 +14,7 @@ macro_rules! debug_enabled {
 macro_rules! should_set_title {
     () => {{
         let args: Vec<String> = std::env::args().collect();
-        !args.contains(&"--melonloader.consoledst".to_string())
+        !args.contains(&"--elementsloader.consoledst".to_string())
     }};
 }
 
@@ -22,7 +22,7 @@ macro_rules! should_set_title {
 macro_rules! console_on_top {
     () => {{
         let args: Vec<String> = std::env::args().collect();
-        args.contains(&"--melonloader.consoleontop".to_string())
+        args.contains(&"--elementsloader.consoleontop".to_string())
     }};
 }
 
@@ -30,6 +30,6 @@ macro_rules! console_on_top {
 macro_rules! hide_console {
     () => {{
         let args: Vec<String> = std::env::args().collect();
-        args.contains(&"--melonloader.hideconsole".to_string())
+        args.contains(&"--elementsloader.hideconsole".to_string())
     }};
 }
