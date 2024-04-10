@@ -23,7 +23,7 @@ fn init() -> Result<(), DynErr> {
 
     println!("Game Name: {}", game_name);
 
-    if !game_name.starts_with("VRChat") {
+    if !game_name.starts_with("vrchat") {
         return Ok(());
     }
     logger::init()?;
