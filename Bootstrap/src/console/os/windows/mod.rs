@@ -102,8 +102,8 @@ fn default_title() -> String {
     };
 
     match IS_ALPHA {
-        true => title.push_str(" Alpha-PreRelease\0"),
-        false => title.push_str(" Open-Beta\0"),
+        true => title.push_str(" UwU\0"),
+        false => title.push_str(" UwU\0"),
     }
 
     title
