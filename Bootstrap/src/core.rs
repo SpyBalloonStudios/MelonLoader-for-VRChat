@@ -1,32 +1,38 @@
 use std::ptr::null;
 
+use std::{thread};
+
 use ctor::ctor;
 
 use crate::{console, errors::DynErr, hooks, internal_failure, logging::logger};
 
 #[ctor]
 fn startup() {
-    init().unwrap_or_else(|e| {
-        internal_failure!("Failed to initialize MelonLoader: {}", e.to_string());
-    })
+    console::init().expect("Failed to get current executable");
+    let current_exe = std::env::current_exe().expect("Failed to get current executable");
+    let game_name = current_exe
+        .file_name()
+        .expect("Failed to get file name from current executable")
+        .to_str()
+        .expect("Failed to convert file name to string");
+
+
+    if !game_name.to_lowercase().starts_with("vrchat") {
+        return; 
+    }
+
+    thread::spawn(|| {
+        init().unwrap_or_else(|e| {
+          
+            eprintln!("Failed to initialize MelonLoader: {}", e);
+        });
+    }); 
 }
 
 fn init() -> Result<(), DynErr> {
     console::init()?;
     println!("Health Check");
-    let current_exe = std::env::current_exe()?;
-    let game_name = current_exe
-        .file_name()
-        .ok_or("Failed to get game name")?
-        .to_str()
-        .ok_or("Failed to get game name")?;
 
-    println!("Game Name: {}", game_name);
-
-    if !game_name.starts_with("vrchat") {
-        return Ok(());
-    }
-    
     logger::init()?;
 
     hooks::init_hook::hook()?;
@@ -34,13 +40,6 @@ fn init() -> Result<(), DynErr> {
     console::null_handles()?;
 
     Ok(())
-}
-
-fn is_vrchat_process() -> bool {
-    std::env::current_exe()
-        .ok()
-        .and_then(|path| path.file_name().map(|name| name.to_string_lossy().starts_with("V")))
-        .unwrap_or(false)
 }
 
 pub fn shutdown() {
