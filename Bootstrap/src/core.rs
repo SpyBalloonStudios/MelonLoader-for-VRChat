@@ -26,6 +26,7 @@ fn init() -> Result<(), DynErr> {
     if !game_name.starts_with("vrchat") {
         return Ok(());
     }
+    
     logger::init()?;
 
     hooks::init_hook::hook()?;
