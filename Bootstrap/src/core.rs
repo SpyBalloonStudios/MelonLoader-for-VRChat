@@ -8,7 +8,6 @@ use crate::{console, errors::DynErr, hooks, internal_failure, logging::logger};
 
 #[ctor]
 fn startup() {
-    console::init().expect("Failed to get current executable");
     let current_exe = std::env::current_exe().expect("Failed to get current executable");
     let game_name = current_exe
         .file_name()
@@ -20,24 +19,24 @@ fn startup() {
     if !game_name.to_lowercase().starts_with("vrchat") {
         return; 
     }
-
-    thread::spawn(|| {
-        init().unwrap_or_else(|e| {
-          
-            eprintln!("Failed to initialize MelonLoader: {}", e);
-        });
-    }); 
+    console::init().expect("Failed to get current executable");
+  
+    init().unwrap_or_else(|e| {
+        internal_failure!("Failed to initialize MelonLoader: {}", e.to_string());
+    });
+    
 }
 
 fn init() -> Result<(), DynErr> {
     console::init()?;
-    println!("Health Check");
 
     logger::init()?;
 
+        // Installiere einen Hook. Auch hier verwenden wir `unwrap`.
     hooks::init_hook::hook()?;
 
-    console::null_handles()?;
+        // Null die Handles zur Konsole. Und wieder verwenden wir `unwrap`.
+        console::null_handles()?;
 
     Ok(())
 }
