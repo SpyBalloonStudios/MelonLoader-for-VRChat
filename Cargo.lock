@@ -19,6 +19,7 @@ dependencies = [
  "netcorehost",
  "thiserror",
  "unity-rs",
+ "winapi",
  "windows 0.54.0",
 ]
 

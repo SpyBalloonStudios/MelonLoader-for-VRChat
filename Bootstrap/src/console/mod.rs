@@ -9,10 +9,6 @@ use os::windows as imp;
 use crate::{errors::DynErr, hide_console};
 
 pub fn init() -> Result<(), DynErr> {
-    if hide_console!() {
-        return Ok(());
-    }
-
     unsafe { imp::init() }
 }
 
